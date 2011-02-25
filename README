@@ -1,0 +1,3 @@
+This is a library for Akismet written in object orientated PHP.
+
+It will support all the features of Akismet, and will have good handling. It aims to be easy to integrate into other projects.
