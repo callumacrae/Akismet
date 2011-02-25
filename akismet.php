@@ -69,14 +69,7 @@ class Akismet
 	public function test()
 	{
 		$test = $this->http_post('key=' . $this->config['api'] . '&blog=' . $this->config['url'], $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/verify-key');
-		if ($test == 'valid')
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		return $test == 'valid';
 	}
 }
 
