@@ -2,14 +2,14 @@
 
 $config = array(
 	//your akismet API key
-	'api'	=> 'api here',
+	'api'	=> 'api',
 
 	//if set to false, use URL set below
-	'url_auto'	=> true,
-	'url'		=> false,
+	'url_auto'	=> false,
+	'url'		=> 'lynxphp.com',
 
 	'akismet_port'		=> 80,
-	'akismet_server'	=> 'rest.akismet.net',
+	'akismet_server'	=> 'rest.akismet.com',
 	'akismet_version'	=> 1.1,
 
 	'timeout'	=> 3, //time to wait in seconds before timing out

@@ -52,37 +52,33 @@ class Akismet
 
 	private function http_post($request, $url, $path)
 	{
-		$length = strlen($request);
-		$http_request = <<<EOT
-POST $path HTTP/1.1
-Host: $this->akismet_server
-Content-Type: application/x-www-form-urlencoded; charset=utf-8
-Content-Length: $length
-User-Agent: {$this->config['app']}/{$this->config['app_ver']} callumacrae/Akismet/$this->version
+		$useragent = $this->config['app'] . '/' . $this->config['app_ver'] . ' callumacrae/Akismet/ . ' . $this->version;
 
-$request
-EOT;
-		if (!$fs = fsockopen($this->config['akismet_server'], $this->config['akismet_port'], $errno, $errstr, $this->config['timeout']))
-		{
-			trigger_error('Failed to make a connection to Akismet server, aborting.', E_USER_ERROR);
-		}
-
-		$response = null;
-		fwrite($fs, $http_request);
-		while(!feof($fs))
-		{
-			$response .= fgets($fs, 1160);
-		}
-
-		fclose($fs);
-		return explode("\r\n\r\n", $response, 2);
+		$ch = curl_init('http://' . $url . $path);
+		curl_setopt($ch, CURLOPT_HEADER, false);
+		curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $this->config['timeout']);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
+		$var = curl_exec($ch);
+		curl_close($ch);
+		return $var;
 	}
 
 	public function test()
 	{
-		print_r($this->http_post('key=' . $this->config['api'] . '&blog=' . $this->config['url'], $this->config['akismet_server'], '/1.1/verify_key'));
+		$test = $this->http_post('key=' . $this->config['api'] . '&blog=' . $this->config['url'], $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/verify-key');
+		if ($test == 'valid')
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }
 
 $akismet = new Akismet;
-$akismet->test();
+var_dump($akismet->test());
