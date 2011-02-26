@@ -47,7 +47,10 @@ class Akismet
 		);
 
 		//check whether api key is valid
-		//$this->test();
+		if (!$this->test())
+		{
+			trigger_error('Could not connect to Akismet');
+		}
 	}
 
 	private function http_post($request, $url, $path)
