@@ -12,7 +12,7 @@ class Akismet
 	private $config = array();
 	private $version = '0.0.1';
 
-	public function __construct()
+	public function __construct($fallback = false, $fallback_args = false)
 	{
 		require('./config.php');
 		$this->config = $config;
@@ -24,9 +24,13 @@ class Akismet
 		}
 
 		//check whether api key is valid
-		if (!$this->test())
+		if (!$this->test() && $fallback)
 		{
-			trigger_error('Could not connect to Akismet');
+			if (!is_array($fallback_args))
+			{
+				$fallback_args = array($fallback_args);
+			}
+			call_user_func_array($fallback, $fallback_args);
 		}
 	}
 
@@ -91,7 +95,7 @@ class Akismet
 	}
 }
 
-$akismet = new Akismet;
+$akismet = new Akismet('trigger_error', 'Could not connect to Akismet');
 $array = array(
 	'comment_author'	=> 'test-viagra-123',
 );
