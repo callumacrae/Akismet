@@ -27,7 +27,7 @@ class Akismet
 		$this->comment = array(
 			'blog'		=> $this->config['url'],
 			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-			'referrer'	=> $_SERVER['HTTP_REFERER'],
+			'referrer'		=> $_SERVER['HTTP_REFERER'],
 		);
 
 		//check whether api key is valid
@@ -42,15 +42,18 @@ class Akismet
 		$useragent = $this->config['app'] . '/' . $this->config['app_ver'] . ' callumacrae/Akismet/ . ' . $this->version;
 
 		$ch = curl_init('http://' . $url . $path);
-		curl_setopt($ch, CURLOPT_HEADER, false);
-		curl_setopt($ch, CURLOPT_USERAGENT, $useragent);
-		curl_setopt($ch, CURLOPT_TIMEOUT, $this->config['timeout']);
-		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-		curl_setopt($ch, CURLOPT_POST, 1);
-		curl_setopt($ch, CURLOPT_POSTFIELDS, $request);
-		$var = curl_exec($ch);
+		curl_setopt_array($ch, array(
+			CURLOPT_HEADER			=> false,
+			CURLOPT_USERAGENT		=> $useragent,
+			CURLOPT_TIMEOUT			=> $this->config['timeout'],
+			CURLOPT_RETURNTRANSFER	=> true,
+			CURLOPT_POST			=> 1,
+			CURLOPT_POSTFIELDS		=> $request,
+			CURLOPT_HTTP_VERSION	=> CURL_HTTP_VERSION_1_0,
+		));
+		$result = curl_exec($ch);
 		curl_close($ch);
-		return $var;
+		return $result;
 	}
 
 	public function test()
