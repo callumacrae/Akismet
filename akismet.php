@@ -23,13 +23,6 @@ class Akismet
 			$this->config['url'] = ($_SERVER['HTTPS'] == 'on' ? 'https' : 'http') . '://' . $_SERVER['SERVER_NAME'] . ($_SERVER['SERVER_PORT'] != 80 ? ':' . $_SERVER['SERVER_PORT'] : null) . '/';
 		}
 
-		//start to populate the comment data
-		$this->comment = array(
-			'blog'		=> $this->config['url'],
-			'user_agent'	=> $_SERVER['HTTP_USER_AGENT'],
-			'referrer'		=> $_SERVER['HTTP_REFERER'],
-		);
-
 		//check whether api key is valid
 		if (!$this->test())
 		{
@@ -61,7 +54,45 @@ class Akismet
 		$test = $this->http_post('key=' . $this->config['api'] . '&blog=' . $this->config['url'], $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/verify-key');
 		return $test == 'valid';
 	}
+	
+	public function check_spam($user)
+	{
+		$info = array(
+			'blog=' . $this->config['url'],
+			'user_ip=' . $_SERVER['REMOTE_ADDR'],
+			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
+			'referrer=' . $_SERVER['HTTP_REFERER'],
+		);
+		
+		if (!empty($user['comment_type']))
+		{
+			$info[] = 'comment_type=' . $user['comment_type'];
+		}
+		
+		if (!empty($user['comment_author']))
+		{
+			$info[] = 'comment_author=' . $user['comment_author'];
+		}
+		
+		if (!empty($user['comment_author_email']))
+		{
+			$info[] = 'comment_author_email=' . $user['comment_author_email'];
+		}
+		
+		if (!empty($user['comment_content']))
+		{
+			$info[] = 'comment_content=' . $user['comment_content'];
+		}
+		
+		$info = implode('&', $info);
+		
+		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/comment-check');
+		return $spam == 'true';
+	}
 }
 
 $akismet = new Akismet;
-var_dump($akismet->test());
+$array = array(
+	'comment_author'	=> 'test-viagra-123',
+);
+var_dump($akismet->check_spam($array));
