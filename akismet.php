@@ -33,17 +33,22 @@ class Akismet
 		}
 
 		//check whether api key is valid
-		if (!$this->test() && $fallback)
+		if (!$this->test())
 		{
-			//convert arguments to an array if they're not already
-			if (!is_array($fallback_args))
+			if ($fallback)
 			{
-				$fallback_args = array($fallback_args);
+				//convert arguments to an array if they're not already
+				if (!is_array($fallback_args))
+				{
+					$fallback_args = array($fallback_args);
+				}
+				
+				//call the fallback
+				call_user_func_array($fallback, $fallback_args);
 			}
-			
-			//call the fallback
-			call_user_func_array($fallback, $fallback_args);
+			return false;
 		}
+		return true;
 	}
 
 	/**
