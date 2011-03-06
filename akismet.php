@@ -124,6 +124,76 @@ class Akismet
 		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/comment-check');
 		return $spam == 'true';
 	}
+	
+	public function submit_spam($user)
+	{
+		$info = array(
+			'blog=' . $this->config['url'],
+			'user_ip=' . $_SERVER['REMOTE_ADDR'],
+			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
+			'referrer=' . $_SERVER['HTTP_REFERER'],
+		);
+		
+		if (!empty($user['comment_type']))
+		{
+			$info[] = 'comment_type=' . $user['comment_type'];
+		}
+		
+		if (!empty($user['comment_author']))
+		{
+			$info[] = 'comment_author=' . $user['comment_author'];
+		}
+		
+		if (!empty($user['comment_author_email']))
+		{
+			$info[] = 'comment_author_email=' . $user['comment_author_email'];
+		}
+		
+		if (!empty($user['comment_content']))
+		{
+			$info[] = 'comment_content=' . $user['comment_content'];
+		}
+		
+		$info = implode('&', $info);
+		
+		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/submit-spam');
+		return $spam == 'true';
+	}
+	
+	public function submit_ham($user)
+	{
+		$info = array(
+			'blog=' . $this->config['url'],
+			'user_ip=' . $_SERVER['REMOTE_ADDR'],
+			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
+			'referrer=' . $_SERVER['HTTP_REFERER'],
+		);
+		
+		if (!empty($user['comment_type']))
+		{
+			$info[] = 'comment_type=' . $user['comment_type'];
+		}
+		
+		if (!empty($user['comment_author']))
+		{
+			$info[] = 'comment_author=' . $user['comment_author'];
+		}
+		
+		if (!empty($user['comment_author_email']))
+		{
+			$info[] = 'comment_author_email=' . $user['comment_author_email'];
+		}
+		
+		if (!empty($user['comment_content']))
+		{
+			$info[] = 'comment_content=' . $user['comment_content'];
+		}
+		
+		$info = implode('&', $info);
+		
+		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/submit-ham');
+		return $spam == 'true';
+	}
 }
 
 $akismet = new Akismet('trigger_error', 'Could not connect to Akismet');
