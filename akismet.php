@@ -88,114 +88,81 @@ class Akismet
 	}
 	
 	/**
-	 * Checks whether comment is spam. See the following page for info
-	 * of what to put in $user (although all the required info is done for you)
+	 * Gets info from the $user array and formats it into something that
+	 * can be sent to Akismet. See the following page for info about what
+	 * to put in the array (all required info is done for you):
 	 * http://akismet.com/development/api/#comment-check
+	 *
+	 * @param array $user Array to be formatted
+	 */
+	private function get_info($user)
+	{
+		$info = array(
+			'blog=' . $this->config['url'],
+			'user_ip=' . $_SERVER['REMOTE_ADDR'],
+			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
+			'referrer=' . $_SERVER['HTTP_REFERER'],
+		);
+		
+		if (!empty($user['comment_type']))
+		{
+			$info[] = 'comment_type=' . $user['comment_type'];
+		}
+		
+		if (!empty($user['comment_author']))
+		{
+			$info[] = 'comment_author=' . $user['comment_author'];
+		}
+		
+		if (!empty($user['comment_author_email']))
+		{
+			$info[] = 'comment_author_email=' . $user['comment_author_email'];
+		}
+		
+		if (!empty($user['comment_content']))
+		{
+			$info[] = 'comment_content=' . $user['comment_content'];
+		}
+		
+		$info = implode('&', $info);
+		return $info;
+	}
+	
+	/**
+	 * Checks whether comment is spam.
 	 *
 	 * @param array $user Array containing details of what should be sent
 	 * 	to Akismet
 	 */
 	public function check_spam($user)
 	{
-		$info = array(
-			'blog=' . $this->config['url'],
-			'user_ip=' . $_SERVER['REMOTE_ADDR'],
-			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
-			'referrer=' . $_SERVER['HTTP_REFERER'],
-		);
-		
-		if (!empty($user['comment_type']))
-		{
-			$info[] = 'comment_type=' . $user['comment_type'];
-		}
-		
-		if (!empty($user['comment_author']))
-		{
-			$info[] = 'comment_author=' . $user['comment_author'];
-		}
-		
-		if (!empty($user['comment_author_email']))
-		{
-			$info[] = 'comment_author_email=' . $user['comment_author_email'];
-		}
-		
-		if (!empty($user['comment_content']))
-		{
-			$info[] = 'comment_content=' . $user['comment_content'];
-		}
-		
-		$info = implode('&', $info);
-		
+		$info = $this->get_info($user);
 		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/comment-check');
 		return $spam == 'true';
 	}
-	
+
+	/**
+	 * Submit spam to Akismet
+	 *
+	 * @param array $user Array containing details of what should be sent
+	 * 	to Akismet
+	 */
 	public function submit_spam($user)
 	{
-		$info = array(
-			'blog=' . $this->config['url'],
-			'user_ip=' . $_SERVER['REMOTE_ADDR'],
-			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
-			'referrer=' . $_SERVER['HTTP_REFERER'],
-		);
-		
-		if (!empty($user['comment_type']))
-		{
-			$info[] = 'comment_type=' . $user['comment_type'];
-		}
-		
-		if (!empty($user['comment_author']))
-		{
-			$info[] = 'comment_author=' . $user['comment_author'];
-		}
-		
-		if (!empty($user['comment_author_email']))
-		{
-			$info[] = 'comment_author_email=' . $user['comment_author_email'];
-		}
-		
-		if (!empty($user['comment_content']))
-		{
-			$info[] = 'comment_content=' . $user['comment_content'];
-		}
-		
-		$info = implode('&', $info);
-		
+		$info = $this->get_info($user);
 		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/submit-spam');
 		return $spam == 'true';
 	}
-	
+
+	/**
+	 * Submit ham to Akismet
+	 *
+	 * @param array $user Array containing details of what should be sent
+	 * 	to Akismet
+	 */
 	public function submit_ham($user)
 	{
-		$info = array(
-			'blog=' . $this->config['url'],
-			'user_ip=' . $_SERVER['REMOTE_ADDR'],
-			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
-			'referrer=' . $_SERVER['HTTP_REFERER'],
-		);
-		
-		if (!empty($user['comment_type']))
-		{
-			$info[] = 'comment_type=' . $user['comment_type'];
-		}
-		
-		if (!empty($user['comment_author']))
-		{
-			$info[] = 'comment_author=' . $user['comment_author'];
-		}
-		
-		if (!empty($user['comment_author_email']))
-		{
-			$info[] = 'comment_author_email=' . $user['comment_author_email'];
-		}
-		
-		if (!empty($user['comment_content']))
-		{
-			$info[] = 'comment_content=' . $user['comment_content'];
-		}
-		
-		$info = implode('&', $info);
-		
+		$info = $this->get_info($user);
 		$spam = $this->http_post($info, $this->config['api'] . '.' . $this->config['akismet_server'], '/' . $this->config['akismet_version'] . '/submit-ham');
 		return $spam == 'true';
 	}
