@@ -12,22 +12,6 @@ class Akismet
 	private $config = array();
 	private $version = '0.0.1';
 
-	//prevents potentially sensitive information from being sent
-	private $ignore = array(
-		'HTTP_COOKIE',
-		'HTTP_X_FORWARDED_FOR',
-		'HTTP_X_FORWARDED_HOST',
-		'HTTP_MAX_FORWARDS',
-		'HTTP_X_FORWARDED_SERVER',
-		'REDIRECT_STATUS',
-		'SERVER_PORT',
-		'PATH',
-		'DOCUMENT_ROOT',
-		'SERVER_ADMIN',
-		'QUERY_STRING',
-		'PHP_SELF',
-	);
-
 	public function __construct()
 	{
 		require('./config.php');
