@@ -4,7 +4,7 @@
  * @package Akismet Library
  * @author Callum Macrae
  * @version 0.0.1
- * @license http://www.gnu.org/licenses/gpl.html GNU General Public License
+ * @license http://www.gnu.org/licenses/gpl2.html GNU General Public License
  */
 
 class Akismet
@@ -17,13 +17,17 @@ class Akismet
 	 * the configuration, and test whether API is valid and a connection can
 	 * be made. If it cannot, call the callback.
 	 *
+	 * @param array $config Configuration
 	 * @param string $fallback The name of the fallback to be called
 	 * @param array $fallback_args The params to be passed to the fallback
 	 * 	If not an array, it will be converted to one
 	 */
-	public function __construct($fallback = false, $fallback_args = false)
+	public function __construct($config = false, $fallback = false, $fallback_args = false)
 	{
-		require('./config.php');
+		if (!$config)
+		{
+			require('./config.php');
+		}
 		$this->config = $config;
 
 		if ($this->config['url_auto'])
