@@ -3,14 +3,14 @@
 /**
  * @package Akismet Library
  * @author Callum Macrae
- * @version 0.0.1
+ * @version 1.0.0-RC1
  * @license http://www.gnu.org/licenses/gpl2.html GNU General Public License
  */
 
 class Akismet
 {
 	private $config = array();
-	private $version = '0.0.1';
+	private $version = '1.0.0-RC1';
 
 	/**
 	 * Gets the configuration, attempts to find the URL if it isn't defined in
@@ -102,30 +102,30 @@ class Akismet
 	private function get_info($user)
 	{
 		$info = array(
-			'blog=' . $this->config['url'],
+			'blog=' . urlencode($this->config['url']),
 			'user_ip=' . $_SERVER['REMOTE_ADDR'],
-			'user_agent=' . $_SERVER['HTTP_USER_AGENT'],
-			'referrer=' . $_SERVER['HTTP_REFERER'],
+			'user_agent=' . urlencode($_SERVER['HTTP_USER_AGENT']),
+			'referrer=' . urlencode($_SERVER['HTTP_REFERER']),
 		);
 		
 		if (!empty($user['comment_type']))
 		{
-			$info[] = 'comment_type=' . $user['comment_type'];
+			$info[] = urlencode('comment_type=' . $user['comment_type']);
 		}
 		
 		if (!empty($user['comment_author']))
 		{
-			$info[] = 'comment_author=' . $user['comment_author'];
+			$info[] = urlencode('comment_author=' . $user['comment_author']);
 		}
 		
 		if (!empty($user['comment_author_email']))
 		{
-			$info[] = 'comment_author_email=' . $user['comment_author_email'];
+			$info[] = urlencode('comment_author_email=' . $user['comment_author_email']);
 		}
 		
 		if (!empty($user['comment_content']))
 		{
-			$info[] = 'comment_content=' . $user['comment_content'];
+			$info[] = urlencode('comment_content=' . $user['comment_content']);
 		}
 		
 		$info = implode('&', $info);
