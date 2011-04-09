@@ -24,9 +24,9 @@ class Akismet
 	 */
 	public function __construct($config = false, $fallback = false, $fallback_args = false)
 	{
-		if (!$config)
+		if (!is_array($config))
 		{
-			require('./config.php');
+			require($config ?: './config.php');
 		}
 		$this->config = $config;
 
@@ -83,7 +83,7 @@ class Akismet
 	}
 
 	/**
-	 * Test whether connection can be made
+	 * Tests whether a connection can be made
 	 */
 	public function test()
 	{
